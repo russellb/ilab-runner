@@ -1,0 +1,81 @@
+@startditaa
+                         +-----------------+
+                         |ilab config init |-=-taxonomy repo cloned          legend
+                         +---+-------------+                                 +---------------+
+                             |                                               |ilab CLI       |
+                             v                                               +---------------+
+                         +---+----------------+                              +-----------+
+                         |ilab model download |-=-model weights downloaded   |manual cPNK|
+                         +---+----------------+                              +-----------+
+                             |                                               +-------------+
+                             v optional                                      |notebook cYEL|
+                         +---+-------------+                                 +-------------+
+                         |ilab model serve |-=-start model server
+                         +---+-------------+
+                             |
+                             v
+                         +---+------------+
+                         |ilab model chat |-=-chat with the model
+                         +---+------------+
+                             |
+                             v
+                         +---+--------------+
+                         |ilab taxonomy diff|-=-view the taxonomy diff
+                         +---+--------------+     expecting nothing
+                             |
+                             v
+                         +---+-----------------------+
+                         |contributor creates/updates|
+                         |examples in taxonomy   cPNK|<-----------------+
+                         +---+-----------------------+                  |
+                             |                                          |
+                             v                                          |
+level 1                  +---+--------------+                           |
+  only validated     +---|ilab taxonomy diff|-=-view the taxonomy diff  |
+  the YAML files     |   +---+--------------+   and validate YAML files |
+                     |       |                                          |
+                     |       v                                          |
+level 2              |   +---+----------------+                         |
+  inspected the      +---|ilab data generate  |-------------------------+ -=-synthesize data;
+  generated samples  |   +---+----------------++other hardware          |      iterate by modifying examples
+                     |       |mac or          |   +--------+----------+ |      if samples do not look good
+                     |       vLinux           +-->|notebook train cYEL| |
+                     |   +---+-------------+      +--------+----------+ |
+                     |   |ilab model train |-=-w/ MLX or   |            |
+                     |   +---+-------------+      PyTorch  v            |
+                     |       |                  +----------+-------+    |
+                     |       v                  |notebook test cYEL+--+ |
+level 3              |   +---+------------+     +---------+--------+  | |
+  tested generated   +---|ilab model test |---------------|-----------+-+ -=-run unit/smoke tests;
+  samples via LoRA   |   +---+------------+               v             |      iterate if some test failed
+                     |       |                  +---------+--------+    |
+                     |       v optional         |download new model|    |
+                     |   +---+---------------+  +-----------------++    |
+                     |   |ilab model convert |-=-MLX to GGUF       |    |
+                     |   +---+---------------+  +------------------+    |
+                     |       |                  |                       |
+                     |       v optional         v                       |
+                     |   +---+------------------+----+                  |
+                     |   |kill ilab model serve cPNK |-=-kill old server|
+                     |   +---+-----------------------+                  |
+                     |       |                                          |
+                     |       v optional                                 |
+                     |   +---+-------------+                            |
+                     |   |ilab model serve |-=-start server with        |
+                     |   +---+-------------+   new model                |
+                     |       |                                          |
+                     |       v optional                                 |
+level 4              |   +---+------------+                             |
+  performed the full |   |ilab model chat |-----------------------------+ -=-chat with the model again;
+  local smoke test   |   +---+------------+                             |      iterate if not happy with outputs
+                     |       |                                          |
+                     |       v                                          |
+                     |   +---+-------------------------------+          |
+                     |   |contributor commits changes and    |          |
+                     +-->|creates/updates their PR in the    |          |
+                         |taxonomy repo                  cPNK|          |
+                         +-----------------+-----------------+          |
+                                           |     PR reviewed by taxonomy reviewers;
+                                           v       iterate if changes are requested
+
+@endditaa

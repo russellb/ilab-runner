@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-name: E2E Test Fedora39
+name: E2E Test Fedora 40
 
 on:
   workflow_dispatch:
@@ -32,8 +32,8 @@ jobs:
         with:
           mode: start
           github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-          ec2-image-id: ami-089651abeb590fb1f
-          ec2-instance-type: g4dn.12xlarge
+          ec2-image-id: ami-0fea12d67307bd0c5
+          ec2-instance-type: g4dn.2xlarge
           subnet-id: subnet-c8db48e9
           security-group-id: sg-0cb244bcab1df59cc
           iam-role-name: InstructLab-e2e-runner
@@ -67,7 +67,9 @@ jobs:
       - name: Install Packages
         run: |
           sudo dnf -y upgrade
-
+          # The following pkgs are already installed on the runner but leaving for brevity
+          sudo dnf install gcc gcc-c++ make git python3.11 python3.11-devel clang17
+          python3.11 -m ensurepip
       - name: Remove llama-cpp-python from cache
         run: |
           pip cache remove llama_cpp_python
@@ -86,7 +88,7 @@ jobs:
           . venv/bin/activate
           sed 's/\[.*\]//' requirements.txt > constraints.txt
           python3.11 -m pip cache remove llama_cpp_python
-          CMAKE_ARGS="-DLLAMA_CUBLAS=on" python3.11 -m pip install --no-binary llama_cpp_python -c constraints.txt llama_cpp_python
+          CUDAHOSTCXX=$(which clang++-17) CMAKE_ARGS="-DLLAMA_CUBLAS=on" python3.11 -m pip install --no-binary llama_cpp_python -c constraints.txt llama_cpp_python
           python3.11 -m pip install bitsandbytes
           python3.11 -m pip install .
 

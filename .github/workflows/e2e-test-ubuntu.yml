@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-name: E2E Test Ubuntu
+name: E2E Test Ubuntu 22.04
 
 on:
   workflow_dispatch:
@@ -33,7 +33,7 @@ jobs:
           mode: start
           github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           ec2-image-id: ami-01eaf86de30bb7fb4
-          ec2-instance-type: g4dn.12xlarge
+          ec2-instance-type: g4dn.2xlarge
           subnet-id: subnet-c8db48e9
           security-group-id: sg-0cb244bcab1df59cc
           iam-role-name: InstructLab-e2e-runner

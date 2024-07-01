@@ -53,10 +53,6 @@ jobs:
           sudo dnf -y upgrade
           sudo dnf install -y gcc gcc-c++ make git python3.11 python3.11-devel
 
-      - name: Remove llama-cpp-python from cache
-        run: |
-          pip cache remove llama_cpp_python
-
       - name: Install ilab
         run: |
           export PATH="/home/ec2-user/.local/bin:/usr/local/cuda/bin:$PATH"

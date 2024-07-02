@@ -116,6 +116,12 @@ jobs:
 
           python3.11 -m pip install .
 
+          python3.11 -m pip uninstall deepspeed
+
+          pip cache purge
+
+          DS_BUILD_CPU_ADAM=1 BUILD_UTILS=1 pip install deepspeed
+
       - name: Run e2e test
         run: |
           export PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.6,max_split_size_mb:128

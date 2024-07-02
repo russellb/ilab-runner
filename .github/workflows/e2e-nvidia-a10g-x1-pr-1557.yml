@@ -117,9 +117,9 @@ jobs:
 
           python3.11 -m pip uninstall -y deepspeed
 
-          pip cache purge
+          python3.11 -m pip cache purge
 
-          DS_BUILD_CPU_ADAM=1 BUILD_UTILS=1 pip install deepspeed
+          DS_BUILD_CPU_ADAM=1 BUILD_UTILS=1 python3.11 -m pip install deepspeed
 
       - name: Run e2e test
         run: |

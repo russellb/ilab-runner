@@ -96,7 +96,7 @@ jobs:
         run: |
           cat /etc/os-release
           sudo dnf -y upgrade
-          sudo dnf install -y gcc gcc-c++ make git python3.11 python3.11-devel nvcc
+          sudo dnf install -y gcc gcc-c++ make git python3.11 python3.11-devel
           ln -s /usr/local/cuda/lib64/libcurand.so /usr/lib/libcurand
 
       - name: Install ilab

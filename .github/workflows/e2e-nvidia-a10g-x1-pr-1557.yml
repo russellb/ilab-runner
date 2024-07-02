@@ -97,7 +97,6 @@ jobs:
           cat /etc/os-release
           sudo dnf -y upgrade
           sudo dnf install -y gcc gcc-c++ make git python3.11 python3.11-devel
-          ln -s /usr/local/cuda/lib64/libcurand.so /usr/lib/libcurand
 
       - name: Install ilab
         run: |
@@ -116,7 +115,7 @@ jobs:
 
           python3.11 -m pip install .
 
-          python3.11 -m pip uninstall deepspeed
+          python3.11 -m pip uninstall -y deepspeed
 
           pip cache purge
 

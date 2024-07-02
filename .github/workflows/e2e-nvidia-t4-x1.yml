@@ -122,9 +122,7 @@ jobs:
           . venv/bin/activate
           sed 's/\[.*\]//' requirements.txt > constraints.txt
           python3.11 -m pip cache remove llama_cpp_python
-          CFLAGS="-I/usr/include" LDFLAGS="-L/usr/lib64 -laio" CUDAHOSTCXX=$(which clang++-17) pip install --no-binary llama_cpp_python -c constraints.txt llama_cpp_python==0.2.79
-
-          CFLAGS="-I/usr/include" LDFLAGS="-L/usr/lib64" CUDAHOSTCXX=$(which clang++-17) CMAKE_ARGS="-DLLAMA_CUBLAS=on" python3.11 -m pip install --no-binary llama_cpp_python -c constraints.txt llama_cpp_python
+          CMAKE_ARGS="-DLLAMA_CUBLAS=on" python3.11 -m pip install --force-reinstall --no-binary llama_cpp_python -c constraints.txt llama_cpp_python
           python3.11 -m pip install bitsandbytes
           python3.11 -m pip install .
 

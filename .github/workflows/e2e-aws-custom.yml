@@ -50,8 +50,8 @@ jobs:
           aws-resource-tags: >
             [
               {"Key": "Name", "Value": "instructlab-ci-github-runner"},
-              {"Key": "GitHubRepository", "Value": "${{ github.repository }}"}
-              {"Key": "GitHubWorkflow", "Value": "${{ github.workflow }}"}
+              {"Key": "GitHubRepository", "Value": "${{ github.repository }}"},
+              {"Key": "GitHubWorkflow", "Value": "${{ github.workflow }}"},
               {"Key": "GitHubRunID", "Value": "${{ github.run_id }}"}
             ]
 

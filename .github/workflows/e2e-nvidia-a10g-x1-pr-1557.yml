@@ -101,7 +101,6 @@ jobs:
 
       - name: Install ilab
         run: |
-          export PATH="/home/ec2-user/.local/bin:/usr/local/cuda/bin:$PATH"
           python3.11 -m venv --upgrade-deps venv
           . venv/bin/activate
           nvidia-smi

@@ -93,15 +93,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Packages
-        run: |
-          cat /etc/os-release
-          sudo dnf -y upgrade
-          sudo dnf install -y gcc gcc-c++ make git python3.11 python3.11-devel cuda
+       # - name: Install Packages
+       # run: |
+         # cat /etc/os-release
+         # sudo dnf -y upgrade
+         # sudo dnf install -y gcc gcc-c++ make git python3.11 python3.11-devel cuda
 
       - name: Install ilab
         run: |
-          python3.11 -m venv --upgrade-deps venv
+          python3.11 -m venv venv
           . venv/bin/activate
           nvidia-smi
           sed 's/\[.*\]//' requirements.txt > constraints.txt

@@ -128,6 +128,11 @@ jobs:
           python3.11 -m pip install torch
 
           DS_BUILD_CPU_ADAM=1 BUILD_UTILS=1 python3.11 -m pip install deepspeed
+
+          nvidia-smi
+
+          python3.11 -m pip show nvidia-nccl-cu12
+          
           ./scripts/basic-workflow-tests.sh -cmf
 
       - name: Add comment to PR if the workflow failed

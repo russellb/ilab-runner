@@ -58,6 +58,7 @@ jobs:
       - name: Determine if pr_or_branch is a PR number
         id: check_pr
         run: |
+          nvidia-smi
           if [[ "${{ github.event.inputs.pr_or_branch }}" =~ ^[0-9]+$ ]]; then
             echo "is_pr=true" >> "$GITHUB_OUTPUT"
           else
@@ -96,7 +97,7 @@ jobs:
         run: |
           cat /etc/os-release
           sudo dnf -y upgrade
-          sudo dnf install -y gcc gcc-c++ make git python3.11 python3.11-devel
+          sudo dnf install -y gcc gcc-c++ make git python3.11 python3.11-devel cuda
 
       - name: Install ilab
         run: |

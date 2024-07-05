@@ -107,7 +107,7 @@ jobs:
       - name: Add comment to PR
         if: steps.check_pr.outputs.is_pr == 'true'
         run: |
-          gh pr comment "${{ github.event.inputs.pr_or_branch }}" -b "${{ github.workflow }} workflow (instance-type: ${{ github.event.inputs.instance_type }}, e2e_script_args: ${{ github.event.inputs.e2e_script_args }}) launched on this PR: [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          gh pr comment "${{ github.event.inputs.pr_or_branch }}" -b "${{ github.workflow }} (instance-type: ${{ github.event.inputs.instance_type }}, e2e_script_args: ${{ github.event.inputs.e2e_script_args }}) workflow launched on this PR: [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

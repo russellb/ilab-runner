@@ -109,22 +109,25 @@ jobs:
           python3.11 -m pip install bitsandbytes
 
           # TODO This should be added to instructlab-training
-          python3.11 -m pip install packaging wheel
+          python3.11 -m pip install wheel
 
           python3.11 -m pip install instructlab-training[cuda]
 
           python3.11 -m pip install .
 
-          python3.11 -m pip uninstall -y deepspeed
-
-          python3.11 -m pip cache purge
-
-          DS_BUILD_CPU_ADAM=1 BUILD_UTILS=1 python3.11 -m pip install deepspeed
-
       - name: Run e2e test
         run: |
           export PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.6,max_split_size_mb:128
           . venv/bin/activate
+          python3.11 -m pip uninstall -y deepspeed
+
+          python3.11 -m pip uninstall -y nvidia-nccl-cu12
+
+          python3.11 -m pip cache purge
+
+          python3.11 -m pip install torch
+
+          DS_BUILD_CPU_ADAM=1 BUILD_UTILS=1 python3.11 -m pip install deepspeed
           ./scripts/basic-workflow-tests.sh -cmf
 
       - name: Add comment to PR if the workflow failed

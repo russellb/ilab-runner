@@ -125,17 +125,11 @@ jobs:
           python3.11 -m pip install bitsandbytes
           python3.11 -m pip install .
 
-      # TODO - Remove this once sdg has a release that includes the new, full pipeline
-      # and all necessary bug fixes
       - name: Install main from instructlab/sdg
         run: |
           git clone https://github.com/instructlab/sdg
           . venv/bin/activate
           cd sdg
-          git remote add russellb https://github.com/russellb/sdg
-          git fetch russellb
-          git checkout russellb/fixes-for-ci
-          git rebase origin/main
           python3.11 -m pip install .
 
       - name: Run e2e test

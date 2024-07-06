@@ -126,11 +126,26 @@ jobs:
           python3.11 -m pip install .
 
       # TODO - Remove this once sdg has a release that includes the new, full pipeline
+      # and all necessary bug fixes
       - name: Install main from instructlab/sdg
+        env:
+          # not secret, but this is convenient ...
+          SDG_MAIN_FIXES: ${{ secrets.SDG_MAIN_FIXES }}
         run: |
+          [ -z "$SDG_MAIN_FIXES" ] && exit 0
           git clone https://github.com/instructlab/sdg
           . venv/bin/activate
           cd sdg
+          # assume SDG_MAIN_FIXES is a list of PR numbers, separated by commas.
+          # For each PR, if it is still open, fetch it and merge it into main.
+          for pr in $(echo $SDG_MAIN_FIXES | tr ',' ' '); do
+            pr_state=$(gh pr view $pr --json state -q .state)
+            if [ "$pr_state" = "open" ]; then
+              gh pr checkout $pr
+              git checkout main
+              git merge FETCH_HEAD
+            fi
+          done
           python3.11 -m pip install .
 
       - name: Run e2e test

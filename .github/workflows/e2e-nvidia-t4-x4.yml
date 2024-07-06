@@ -129,7 +129,6 @@ jobs:
       # and all necessary bug fixes
       - name: Install main from instructlab/sdg
         run: |
-          [ -z "$SDG_MAIN_FIXES" ] && exit 0
           git clone https://github.com/instructlab/sdg
           . venv/bin/activate
           cd sdg

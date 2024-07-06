@@ -131,6 +131,7 @@ jobs:
         env:
           # not secret, but this is convenient ...
           SDG_MAIN_FIXES: ${{ secrets.SDG_MAIN_FIXES }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           [ -z "$SDG_MAIN_FIXES" ] && exit 0
           git clone https://github.com/instructlab/sdg

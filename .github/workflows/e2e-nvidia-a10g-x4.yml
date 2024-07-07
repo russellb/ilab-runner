@@ -116,6 +116,10 @@ jobs:
 
       - name: Install ilab
         run: |
+          # remove this when moving to ilab repo
+          git clone https://github.com/instructlab/instructlab
+          cd instructlab
+          # end removal block
           export PATH="/home/ec2-user/.local/bin:/usr/local/cuda/bin:$PATH"
           python3.11 -m venv --upgrade-deps venv
           . venv/bin/activate
@@ -125,6 +129,7 @@ jobs:
           python3.11 -m pip install bitsandbytes
           python3.11 -m pip install .
 
+      # TODO - remove this after making an SDG release
       - name: Install main from instructlab/sdg
         run: |
           git clone https://github.com/instructlab/sdg

@@ -135,7 +135,7 @@ jobs:
       - name: Run e2e test
         run: |
           . venv/bin/activate
-          HF_TOKEN="${{ secrets.HF_TOKEN }}" ./scripts/basic-workflow-tests.sh -cmfFM
+          HF_TOKEN="${{ secrets.HF_TOKEN }}" ./scripts/basic-workflow-tests.sh -cmFM
 
       - name: Add comment to PR if the workflow failed
         if: failure() && steps.check_pr.outputs.is_pr == 'true'

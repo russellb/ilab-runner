@@ -116,13 +116,13 @@ jobs:
 
       - name: Install ilab
         run: |
+          export PATH="/home/ec2-user/.local/bin:/usr/local/cuda/bin:$PATH"
+          python3.11 -m venv --upgrade-deps venv
+          . venv/bin/activate
           # remove this when moving to ilab repo
           git clone https://github.com/instructlab/instructlab
           cd instructlab
           # end removal block
-          export PATH="/home/ec2-user/.local/bin:/usr/local/cuda/bin:$PATH"
-          python3.11 -m venv --upgrade-deps venv
-          . venv/bin/activate
           sed 's/\[.*\]//' requirements.txt > constraints.txt
           python3.11 -m pip cache remove llama_cpp_python
           CMAKE_ARGS="-DLLAMA_CUBLAS=on" python3.11 -m pip install --force-reinstall --no-binary llama_cpp_python -c constraints.txt llama_cpp_python
@@ -138,9 +138,12 @@ jobs:
           python3.11 -m pip install .
 
       - name: Run e2e test
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           . venv/bin/activate
-          HF_TOKEN="${{ secrets.HF_TOKEN }}" ./scripts/basic-workflow-tests.sh -cmFM
+          cd instructlab # TODO - remove this line when moving into ilab repo
+          ./scripts/basic-workflow-tests.sh -cmFM
 
       - name: Add comment to PR if the workflow failed
         if: failure() && steps.check_pr.outputs.is_pr == 'true'

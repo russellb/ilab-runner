@@ -91,6 +91,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Fetch and checkout PR
+        id: fetch_pr
+        if: steps.check_pr.outputs.is_pr == 'true'
+        run: |
+          gh pr checkout ${{ github.event.inputs.pr_or_branch }}
+          echo "head_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout branch
+        if: steps.check_pr.outputs.is_pr == 'false'
+        run: |
+          git checkout ${{ github.event.inputs.pr_or_branch }}
+
       - name: Create Check Run
         id: create_check
         if: steps.check_pr.outputs.is_pr == 'true'
@@ -99,7 +113,7 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const { owner, repo } = context.repo;
-            const head_sha = '${{ github.event.pull_request.head.sha }}';
+            const head_sha = '${{ steps.fetch_pr.outputs.head_sha }}';
             const createCheckResponse = await github.rest.checks.create({
               owner,
               repo,
@@ -110,18 +124,6 @@ jobs:
             return createCheckResponse.data.id;
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Fetch and checkout PR
-        if: steps.check_pr.outputs.is_pr == 'true'
-        run: |
-          gh pr checkout ${{ github.event.inputs.pr_or_branch }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout branch
-        if: steps.check_pr.outputs.is_pr == 'false'
-        run: |
-          git checkout ${{ github.event.inputs.pr_or_branch }}
 
       - name: Install Packages
         run: |

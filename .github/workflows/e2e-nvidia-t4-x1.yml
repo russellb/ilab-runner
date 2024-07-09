@@ -90,10 +90,23 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add comment to PR
+      - name: Create Check Run
+        id: create_check
         if: steps.check_pr.outputs.is_pr == 'true'
-        run: |
-          gh pr comment "${{ github.event.inputs.pr_or_branch }}" -b "${{ github.workflow }} workflow launched on this PR: [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const { owner, repo } = context.repo;
+            const head_sha = '${{ github.event.pull_request.head.sha }}';
+            const createCheckResponse = await github.rest.checks.create({
+              owner,
+              repo,
+              name: 'e2e-nvidia-t4-x1',
+              head_sha,
+              status: 'in_progress',
+            });
+            return createCheckResponse.data.id;
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -130,17 +143,49 @@ jobs:
           . venv/bin/activate
           ./scripts/basic-workflow-tests.sh -cm
 
-      - name: Add comment to PR if the workflow failed
+      - name: Update Check Run on Failure
         if: failure() && steps.check_pr.outputs.is_pr == 'true'
-        run: |
-          gh pr comment "${{ github.event.inputs.pr_or_branch }}" -b "e2e workflow failed on this PR: [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}), please investigate."
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const { owner, repo } = context.repo;
+            const check_run_id = ${{ steps.create_check.outputs.result }};
+            await github.rest.checks.update({
+              owner,
+              repo,
+              check_run_id,
+              conclusion: 'failure',
+              completed_at: new Date().toISOString(),
+              status: 'completed',
+              output: {
+                title: 'E2E Test Failure',
+                summary: 'The E2E tests failed. Please investigate.',
+              },
+            });
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add comment to PR if the workflow succeeded
+      - name: Update Check Run on Success
         if: success() && steps.check_pr.outputs.is_pr == 'true'
-        run: |
-          gh pr comment "${{ github.event.inputs.pr_or_branch }}" -b "e2e workflow succeeded on this PR: [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}), congrats!"
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const { owner, repo } = context.repo;
+            const check_run_id = ${{ steps.create_check.outputs.result }};
+            await github.rest.checks.update({
+              owner,
+              repo,
+              check_run_id,
+              conclusion: 'success',
+              completed_at: new Date().toISOString(),
+              status: 'completed',
+              output: {
+                title: 'E2E Test Success',
+                summary: 'Congratulations! The E2E tests passed successfully.',
+              },
+            });
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

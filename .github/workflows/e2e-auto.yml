@@ -67,10 +67,10 @@ jobs:
       - name: Trigger the E2E Workflow
         id: trigger
         run: |
-          output=$(gh workflow run e2e-nvidia-t4-x1.yml --ref ${{ github.head_ref }} -R ${{ github.repository }} --json databaseId)
-          run_id=$(echo $output | jq -r '.databaseId')
+          output=$(gh workflow run e2e-nvidia-t4-x1.yml --ref ${{ github.head_ref }} -R ${{ github.repository }} --json id)
+          run_id=$(echo $output | jq -r '.id')
           echo "Workflow run ID: $run_id"
-          echo "run_id=$run_id" >> $GITHUB_ENV
+          echo "RUN_ID=$run_id" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

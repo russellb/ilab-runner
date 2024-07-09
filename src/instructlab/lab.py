@@ -83,7 +83,7 @@ aliases = {
 @click.pass_context
 # pylint: disable=redefined-outer-name
 def ilab(ctx, config_file):
-    """CLI for interacting with InstructLab.
+    """CLI for interacting with InstructLabbbbbbbbb.
 
     If this is your first time running ilab, it's best to start with `ilab config init` to create the environment.
     """

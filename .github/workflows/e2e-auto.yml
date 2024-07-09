@@ -1,0 +1,98 @@
+name: Trigger and Monitor Workflow via PR
+
+on:
+  push:
+    branches:
+      - "main"
+      - "release-**"
+    paths:
+      - '**.py'
+      - 'pyproject.toml'
+      - 'requirements*.txt'
+      - '.github/workflows/e2e.yml'
+  pull_request:
+    branches:
+      - "main"
+      - "release-**"
+    paths:
+      - '**.py'
+      - 'pyproject.toml'
+      - 'requirements*.txt'
+      - '.github/workflows/e2e.yml'
+
+jobs:
+  trigger-and-monitor-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          # https://github.com/actions/checkout/issues/249
+          fetch-depth: 0
+
+      - name: Check if gh cli is installed
+        id: gh_cli
+        run: |
+          if command -v gh &> /dev/null ; then
+            echo "gh_cli_installed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "gh_cli_installed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configure gh CLI APT repository
+        if: steps.gh_cli.outputs.gh_cli_installed == 'false'
+        run: |
+          (type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y))
+          sudo mkdir -p -m 755 /etc/apt/keyrings
+          wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+          sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+
+      - name: Install gh CLI
+        if: steps.gh_cli.outputs.gh_cli_installed == 'false'
+        run: |
+          sudo apt install gh -y
+
+      - name: test gh CLI
+        run: |
+          gh --version
+
+      - name: set default repo
+        run: |
+          gh repo set-default ${{ github.server_url }}/${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger the E2E Workflow
+        id: trigger
+        run: |
+          output=$(gh workflow run e2e-nvidia-t4-x1.yml --ref ${{ github.head_ref }} -R ${{ github.repository }} --json databaseId)
+          run_id=$(echo $output | jq -r '.databaseId')
+          echo "Workflow run ID: $run_id"
+          echo "run_id=$run_id" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Poll for Workflow Completion
+        run: |
+          status="in_progress"
+          conclusion=""
+          while [ "$status" = "in_progress" ] || [ "$status" = "queued" ]; do
+            sleep 30
+            current_status=$(gh run view $run_id --json status,conclusion --jq '. | .status, .conclusion')
+            readarray -t status_array <<< "$current_status"
+            status=${status_array[0]}
+            conclusion=${status_array[1]}
+            echo "Current status: $status"
+            echo "Current conclusion: $conclusion"
+            if [ "$status" != "in_progress" ] && [ "$status" != "queued" ]; then
+              break
+            fi
+          done
+          if [ "$conclusion" != "success" ]; then
+            echo "Workflow failed or did not complete successfully."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

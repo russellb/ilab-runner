@@ -114,14 +114,15 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const head_sha = '${{ steps.fetch_pr.outputs.head_sha }}';
-            const details_url = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
             const createCheckResponse = await github.rest.checks.create({
               owner,
               repo,
               name: 'e2e-nvidia-t4-x1',
               head_sha,
               status: 'in_progress',
-              details_url,
+              output: {
+                title: 'E2E Test',
+                summary: 'Running E2E tests... [Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})',}
             });
             return createCheckResponse.data.id;
         env:
@@ -165,7 +166,7 @@ jobs:
               status: 'completed',
               output: {
                 title: 'E2E Test Failure',
-                summary: 'The E2E tests failed. Please investigate.',
+                summary: 'The E2E tests failed. [Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})',
               },
             });
         env:
@@ -188,7 +189,7 @@ jobs:
               status: 'completed',
               output: {
                 title: 'E2E Test Success',
-                summary: 'Congratulations! The E2E tests passed successfully.',
+                summary: 'Congratulations! The E2E tests passed successfully. [Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})',
               },
             });
         env:

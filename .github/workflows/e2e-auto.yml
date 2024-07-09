@@ -60,6 +60,12 @@ jobs:
             }`
 
       - name: E2E Workflow will begin shortly
+        if: github.event_name == 'pull_request'
         run: |
           echo "E2E Workflow for PR ${{ github.event.pull_request.number }} has been triggered."
           echo "It will show up in the status checks shortly."
+
+      - name: E2E Workflow will begin shortly
+        if: github.event_name == 'push'
+        run: |
+          echo "E2E Workflow for branch ${{ github.ref_name }} has been triggered."

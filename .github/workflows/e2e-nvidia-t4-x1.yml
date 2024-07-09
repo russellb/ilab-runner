@@ -114,12 +114,14 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const head_sha = '${{ steps.fetch_pr.outputs.head_sha }}';
+            const details_url = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
             const createCheckResponse = await github.rest.checks.create({
               owner,
               repo,
               name: 'e2e-nvidia-t4-x1',
               head_sha,
               status: 'in_progress',
+              details_url,
             });
             return createCheckResponse.data.id;
         env:

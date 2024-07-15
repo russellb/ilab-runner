@@ -65,7 +65,7 @@ jobs:
 
       - name: Fetch and checkout PR
         id: fetch_pr
-        if: ${{ github.event_name == 'pull_request_target' }} == 'true'
+        if: github.event_name == 'pull_request_target'
         run: |
           git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-${{ github.event.pull_request.number }}
           git checkout pr-${{ github.event.pull_request.number }}

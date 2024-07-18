@@ -124,28 +124,18 @@ jobs:
           # remove this when moving to ilab repo
           git clone https://github.com/instructlab/instructlab
           cd instructlab
-          gh co 1657
           # end removal block
           sed 's/\[.*\]//' requirements.txt > constraints.txt
           python3.11 -m pip cache remove llama_cpp_python
           CMAKE_ARGS="-DLLAMA_CUBLAS=on" python3.11 -m pip install --force-reinstall --no-binary llama_cpp_python -c constraints.txt llama_cpp_python
           python3.11 -m pip install bitsandbytes
           python3.11 -m pip install .
-
-      # TODO - remove this after making an SDG release
-      - name: Install main from instructlab/sdg
-        run: |
-          git clone https://github.com/instructlab/sdg
-          . venv/bin/activate
-          cd sdg
-          python3.11 -m pip install .
+          python3.11 -m pip install -r requirements-vllm-cuda.txt
 
       - name: Run e2e test
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          . venv/bin/activate
-          cd instructlab # TODO - remove this line when moving into ilab repo
           # TODO Add training once training with the training lib is supported in e2e
           SKIP_TRAIN=1 ./scripts/basic-workflow-tests.sh -cmvFM
 

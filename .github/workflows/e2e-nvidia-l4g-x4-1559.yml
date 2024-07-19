@@ -69,7 +69,7 @@ jobs:
           git remote add upstream https://github.com/n1hility/instructlab
           # gh repo set-default n1hility/instructlab
           #gh co test-vllm
-          fit fetch upstream test-vllm
+          git fetch upstream test-vllm
           git checkout FETCH_HEAD
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -64,32 +64,13 @@ jobs:
             echo "is_pr=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Check if gh cli is installed
-        id: gh_cli
-        run: |
-          if command -v gh &> /dev/null ; then
-            echo "gh_cli_installed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "gh_cli_installed=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Install gh CLI
-        if: steps.gh_cli.outputs.gh_cli_installed == 'false'
-        run: |
-          sudo dnf install 'dnf-command(config-manager)' -y
-          sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-          sudo dnf install gh --repo gh-cli -y
-
-      - name: test gh CLI
-        run: |
-          gh --version
-
       - name: HACK - set default repo and checkout branch
         run: |
           git remote add upstream https://github.com/n1hility/instructlab
           # gh repo set-default n1hility/instructlab
           #gh co test-vllm
-          git checkout test-vllm
+          fit fetch upstream test-vllm
+          git checkout FETCH_HEAD
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

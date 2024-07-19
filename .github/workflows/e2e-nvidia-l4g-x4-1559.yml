@@ -87,8 +87,9 @@ jobs:
       - name: HACK - set default repo and checkout branch
         run: |
           git remote add upstream https://github.com/n1hility/instructlab
-          gh repo set-default instructlab/instructlab
-          gh co test-vllm
+          # gh repo set-default n1hility/instructlab
+          #gh co test-vllm
+          git checkout test-vllm
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

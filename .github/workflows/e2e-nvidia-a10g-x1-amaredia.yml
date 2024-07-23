@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-name: E2E (NVIDIA A10G x1)
+name: E2E (NVIDIA A10G x1) - AMAREDIA
 
 on:
   workflow_dispatch:

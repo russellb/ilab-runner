@@ -70,9 +70,8 @@ jobs:
 
       - name: HACK - set default repo and checkout branch
         run: |
-          git remote add upstream https://github.com/instructlab/instructlab
-          git fetch upstream main
-          git checkout FETCH_HEAD
+          git remote add -f upstream https://github.com/alimaredia/instructlab
+          git checkout basic-workflow-data-home-to-cache-home
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -100,7 +99,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           . venv/bin/activate
-          ./scripts/basic-workflow-tests.sh -mFMT
+          ./scripts/basic-workflow-tests.sh -mfFMT
 
       - name: Add comment to PR if the workflow failed
         if: failure() && steps.check_pr.outputs.is_pr == 'true'

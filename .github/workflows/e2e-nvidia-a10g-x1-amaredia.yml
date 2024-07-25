@@ -66,9 +66,8 @@ jobs:
 
       - name: HACK - set default repo and checkout branch
         run: |
-          git remote add upstream https://github.com/instructlab/instructlab
-          git fetch upstream main
-          git checkout FETCH_HEAD
+          git remote add -f upstream https://github.com/alimaredia/instructlab
+          git checkout basic-workflow-data-home-to-cache-home
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
